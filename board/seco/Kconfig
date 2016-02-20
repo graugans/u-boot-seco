@@ -63,3 +63,16 @@ config SYS_CONFIG_NAME
 	default "secomx6quq7" if SECOMX6_UQ7 && SECOMX6Q
 
 endif
+
+if TARGET_SECOSBCA62
+
+config SYS_BOARD
+	default "mx6sbca62"
+
+config SYS_CONFIG_NAME
+	default "secomx6sbca62"
+
+config SYS_VENDOR
+	default "seco"
+
+endif
