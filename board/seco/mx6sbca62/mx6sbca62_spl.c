@@ -228,7 +228,14 @@ static void gpr_init(void)
 
 static void spl_dram_init(void)
 {
-	if (is_cpu_type(MXC_CPU_MX6DL)) {
+	if (is_cpu_type(MXC_CPU_MX6SOLO)) {
+		mt41k128m16jt_125.mem_speed = 800;
+		mem_qdl.rtt_nom = 1;
+		mem_qdl.rtt_wr = 1;
+
+		mx6sdl_dram_iocfg(64, &mx6sdl_ddr_ioregs, &mx6sdl_grp_ioregs);
+		mx6_dram_cfg(&mem_qdl, &mx6dl_1g_mmdc_calib, &mt41k128m16jt_125);
+	} else if (is_cpu_type(MXC_CPU_MX6DL)) {
 		mt41k128m16jt_125.mem_speed = 800;
 		mem_qdl.rtt_nom = 1;
 		mem_qdl.rtt_wr = 1;

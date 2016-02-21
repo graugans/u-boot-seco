@@ -306,8 +306,10 @@ int board_late_init(void)
 #ifdef CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG
 	if (is_cpu_type(MXC_CPU_MX6Q))
 		setenv("board_rev", "MX6Q");
-	else
+	else if (is_cpu_type(MXC_CPU_MX6DL))
 		setenv("board_rev", "MX6DL");
+	else
+		setenv("board_rev", "MX6SOLO");
 #endif
 	return 0;
 }
@@ -315,9 +317,11 @@ int board_late_init(void)
 int checkboard(void)
 {
 	if (is_cpu_type(MXC_CPU_MX6Q))
-		puts("Board: Seco A62 Quad\n");
+		puts("Board: Seco SBC-A62-J-QUAD\n");
+	else if (is_cpu_type(MXC_CPU_MX6DL))
+		 puts("Board: Seco SBC-A62-J-LITE\n");
 	else
-		puts("Board: Seco A62 DualLite\n");
+		puts("Board: Seco SBC-A62-J-SOLO\n");
 
 	return 0;
 }
