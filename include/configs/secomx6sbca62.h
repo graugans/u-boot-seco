@@ -27,6 +27,17 @@
 #define CONFIG_MXC_UART
 #define CONFIG_MXC_UART_BASE		UART2_BASE
 
+
+/* I2C Configs */
+#define CONFIG_CMD_I2C
+#define CONFIG_SYS_I2C
+#define CONFIG_SYS_I2C_MXC
+#define CONFIG_SYS_I2C_MXC_I2C2         /* enable I2C bus 2 */
+#define CONFIG_SYS_I2C_MXC_I2C3         /* enable I2C bus 3 */
+#define CONFIG_SYS_I2C_SPEED            100000
+#define CONFIG_I2C_EDID
+
+
 /* Network support */
 
 #define CONFIG_CMD_PING

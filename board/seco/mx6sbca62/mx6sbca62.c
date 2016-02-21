@@ -15,6 +15,7 @@
 #include <asm/gpio.h>
 #include <asm/imx-common/iomux-v3.h>
 #include <asm/imx-common/sata.h>
+#include <asm/imx-common/mxc_i2c.h>
 #include <mmc.h>
 #include <fsl_esdhc.h>
 #include <asm/arch/crm_regs.h>
@@ -23,6 +24,7 @@
 #include <micrel.h>
 #include <miiphy.h>
 #include <netdev.h>
+#include <i2c.h>
 
 DECLARE_GLOBAL_DATA_PTR;
 
@@ -36,6 +38,10 @@ DECLARE_GLOBAL_DATA_PTR;
 #define USDHC_PAD_CTRL (PAD_CTL_PUS_47K_UP |			\
 	PAD_CTL_SPEED_LOW | PAD_CTL_DSE_80ohm |			\
 	PAD_CTL_SRE_FAST  | PAD_CTL_HYS)
+
+#define I2C_PAD_CTRL   (PAD_CTL_PUS_100K_UP |                  \
+        PAD_CTL_SPEED_MED | PAD_CTL_DSE_40ohm | PAD_CTL_HYS |   \
+        PAD_CTL_ODE | PAD_CTL_SRE_FAST)
 
 #define WDT_EN		IMX_GPIO_NR(5, 4)
 #define WDT_TRG		IMX_GPIO_NR(3, 19)
@@ -66,6 +72,39 @@ static iomux_v3_cfg_t const wdog_pads[] = {
 	IOMUX_PADS(PAD_EIM_D19__GPIO3_IO19),
 };
 
+
+/*  I2C2 - EEPROM, HDMI  */
+struct i2c_pads_info i2c_pad_info1 = {
+	.scl = {
+		.i2c_mode  = MX6Q_PAD_KEY_COL3__I2C2_SCL   | MUX_PAD_CTRL(I2C_PAD_CTRL),
+		.gpio_mode = MX6Q_PAD_KEY_COL3__GPIO4_IO12 | MUX_PAD_CTRL(I2C_PAD_CTRL),
+		.gp        = IMX_GPIO_NR(4, 12),
+	},
+	.sda = {
+		.i2c_mode  = MX6Q_PAD_KEY_ROW3__I2C2_SDA   | MUX_PAD_CTRL(I2C_PAD_CTRL),
+		.gpio_mode = MX6Q_PAD_KEY_ROW3__GPIO4_IO13 | MUX_PAD_CTRL(I2C_PAD_CTRL),
+		.gp        = IMX_GPIO_NR(4, 13),
+	},
+};
+
+
+/*  I2C3 - H29, CN11  */
+struct i2c_pads_info i2c_pad_info2 = {
+	.scl = {
+		.i2c_mode  = MX6Q_PAD_GPIO_5__I2C3_SCL
+		        | MUX_PAD_CTRL(I2C_PAD_CTRL),
+		.gpio_mode = MX6Q_PAD_GPIO_5__GPIO1_IO05
+		        | MUX_PAD_CTRL(I2C_PAD_CTRL),
+		.gp        = IMX_GPIO_NR(1, 5),
+	},
+	.sda = {
+		.i2c_mode  = MX6Q_PAD_GPIO_6__I2C3_SDA
+		        | MUX_PAD_CTRL(I2C_PAD_CTRL),
+		.gpio_mode = MX6Q_PAD_GPIO_6__GPIO1_IO06
+		        | MUX_PAD_CTRL(I2C_PAD_CTRL),
+		.gp        = IMX_GPIO_NR(7, 11),
+	},
+};
 int mx6_rgmii_rework(struct phy_device *phydev)
 {
 	/*
@@ -129,6 +168,13 @@ static iomux_v3_cfg_t const enet_pads2[] = {
 	IOMUX_PADS(PAD_RGMII_RD3__RGMII_RD3	| MUX_PAD_CTRL(ENET_PAD_CTRL)),
 	IOMUX_PADS(PAD_RGMII_RX_CTL__RGMII_RX_CTL	| MUX_PAD_CTRL(ENET_PAD_CTRL)),
 };
+
+void setup_a62_i2c(void)
+{
+    setup_i2c(1, CONFIG_SYS_I2C_SPEED, 0x7f, &i2c_pad_info1);
+    setup_i2c(2, CONFIG_SYS_I2C_SPEED, 0x7f, &i2c_pad_info2);
+
+}
 
 static void setup_iomux_enet(void)
 {
@@ -243,6 +289,10 @@ int board_init(void)
 {
 	/* address of boot parameters */
 	gd->bd->bi_boot_params = PHYS_SDRAM + 0x100;
+
+#ifdef CONFIG_CMD_I2C
+	setup_a62_i2c();
+#endif
 
 #ifdef CONFIG_CMD_SATA
 	if (is_cpu_type(MXC_CPU_MX6Q))
