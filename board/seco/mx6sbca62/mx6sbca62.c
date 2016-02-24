@@ -148,7 +148,7 @@ static iomux_v3_cfg_t const enet_pads1[] = {
 	/* RGMII reset */
 	IOMUX_PADS(PAD_EIM_D23__GPIO3_IO23		| MUX_PAD_CTRL(NO_PAD_CTRL)),
 	/* Ethernet power supply */
-	IOMUX_PADS(PAD_EIM_EB3__GPIO2_IO31		| MUX_PAD_CTRL(NO_PAD_CTRL)),
+	IOMUX_PADS(PAD_KEY_COL2__GPIO4_IO10		| MUX_PAD_CTRL(NO_PAD_CTRL)),
 	/* pin 32 - 1 - (MODE0) all */
 	IOMUX_PADS(PAD_RGMII_RD0__GPIO6_IO25		| MUX_PAD_CTRL(NO_PAD_CTRL)),
 	/* pin 31 - 1 - (MODE1) all */
@@ -180,7 +180,8 @@ static void setup_iomux_enet(void)
 {
 	SETUP_IOMUX_PADS(enet_pads1);
 	udelay(20);
-	gpio_direction_output(IMX_GPIO_NR(2, 31), 1); /* Power supply on */
+	gpio_direction_output(IMX_GPIO_NR(4, 10), 1); /* Power supply on */
+	gpio_set_value (IMX_GPIO_NR(4, 10), 1);
 
 	gpio_direction_output(IMX_GPIO_NR(3, 23), 0); /* assert PHY rst */
 
