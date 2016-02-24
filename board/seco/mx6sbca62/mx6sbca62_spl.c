@@ -182,23 +182,19 @@ static struct mx6_mmdc_calibration mx6dl_1g_mmdc_calib = {
 	.p1_mpwrdlctl = 0x32383630,
 };
 
-/* DDR 64bit 1GB */
-static struct mx6_ddr_sysinfo mem_qdl = {
-	.dsize = 2,
-	.cs1_mirror = 0,
-	/* config for full 4GB range so that get_mem_size() works */
-	.cs_density = 32,
-	.ncs = 1,
-	.bi_on = 1,
-	/* quad = 2, duallite = 1 */
-	.rtt_nom = 2,
-	/* quad = 2, duallite = 1 */
-	.rtt_wr = 2,
-	.ralat = 5,
-	.walat = 0,
-	.mif3_mode = 3,
-	.rst_to_cke = 0x23,
-	.sde_to_rst = 0x10,
+static struct mx6_mmdc_calibration mx6s_128x32_mmdc_calib = {
+	.p0_mpwldectrl0 = 0x002F0038,
+	.p0_mpwldectrl1 = 0x001F001F,
+	.p1_mpwldectrl0 = 0x001F001F,
+	.p1_mpwldectrl1 = 0x001F001F,
+	.p0_mpdgctrl0 = 0x425C0251,
+	.p0_mpdgctrl1 = 0x021B021E,
+	.p1_mpdgctrl0 = 0x021B021E,
+	.p1_mpdgctrl1 = 0x01730200,
+	.p0_mprddlctl = 0x45474C45,
+	.p1_mprddlctl = 0x44464744,
+	.p0_mpwrdlctl = 0x3F3F3336,
+	.p1_mpwrdlctl = 0x32383630,
 };
 
 static void ccgr_init(void)
@@ -228,27 +224,46 @@ static void gpr_init(void)
 
 static void spl_dram_init(void)
 {
-	if (is_cpu_type(MXC_CPU_MX6SOLO)) {
-		mt41k128m16jt_125.mem_speed = 800;
-		mem_qdl.rtt_nom = 1;
-		mem_qdl.rtt_wr = 1;
+	struct mx6_ddr_sysinfo sysinfo = {
+		/* width of data bus:0=16,1=32,2=64 */
+		.dsize = 2,
+		/* config for full 4GB range so that get_mem_size() works */
+		.cs_density = 32, /* 32Gb per CS */
+		/* single chip select */
+		.ncs = 1,
+		.cs1_mirror = 0,
+		.rtt_wr = 1 /*DDR3_RTT_60_OHM*/,	/* RTT_Wr = RZQ/4 */
+		.rtt_nom = 1 /*DDR3_RTT_60_OHM*/,	/* RTT_Nom = RZQ/4 */
+		.walat = 1,	/* Write additional latency */
+		.ralat = 5,	/* Read additional latency */
+		.mif3_mode = 3,	/* Command prediction working mode */
+		.bi_on = 1,	/* Bank interleaving enabled */
+		.sde_to_rst = 0x10,	/* 14 cycles, 200us (JEDEC default) */
+		.rst_to_cke = 0x23,	/* 33 cycles, 500us (JEDEC default) */
+	};
 
-		mx6sdl_dram_iocfg(64, &mx6sdl_ddr_ioregs, &mx6sdl_grp_ioregs);
-		mx6_dram_cfg(&mem_qdl, &mx6dl_1g_mmdc_calib, &mt41k128m16jt_125);
+	if (is_cpu_type(MXC_CPU_MX6SOLO)) {
+		mt41k128m16jt_125.mem_speed = 1066;
+		sysinfo.dsize = 1,
+		sysinfo.rtt_nom = 1;
+		sysinfo.rtt_wr = 1;
+
+		mx6sdl_dram_iocfg(32, &mx6sdl_ddr_ioregs, &mx6sdl_grp_ioregs);
+		mx6_dram_cfg(&sysinfo, &mx6s_128x32_mmdc_calib, &mt41k128m16jt_125);
 	} else if (is_cpu_type(MXC_CPU_MX6DL)) {
 		mt41k128m16jt_125.mem_speed = 800;
-		mem_qdl.rtt_nom = 1;
-		mem_qdl.rtt_wr = 1;
+		sysinfo.rtt_nom = 1;
+		sysinfo.rtt_wr = 1;
 
 		mx6sdl_dram_iocfg(64, &mx6sdl_ddr_ioregs, &mx6sdl_grp_ioregs);
-		mx6_dram_cfg(&mem_qdl, &mx6dl_1g_mmdc_calib, &mt41k128m16jt_125);
+		mx6_dram_cfg(&sysinfo, &mx6dl_1g_mmdc_calib, &mt41k128m16jt_125);
 	} else if (is_cpu_type(MXC_CPU_MX6Q)) {
 		mt41k128m16jt_125.mem_speed = 1066;
-		mem_qdl.rtt_nom = 2;
-		mem_qdl.rtt_wr = 2;
+		sysinfo.rtt_nom = 2;
+		sysinfo.rtt_wr = 2;
 
 		mx6dq_dram_iocfg(64, &mx6dq_ddr_ioregs, &mx6dq_grp_ioregs);
-		mx6_dram_cfg(&mem_qdl, &mx6q_1g_mmdc_calib, &mt41k128m16jt_125);
+		mx6_dram_cfg(&sysinfo, &mx6q_1g_mmdc_calib, &mt41k128m16jt_125);
 	}
 
 	udelay(100);
