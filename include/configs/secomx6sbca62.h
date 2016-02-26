@@ -66,6 +66,16 @@
 #define APX_WDT_ENABLE_NUM        11
 
 
+/* SPI */
+#define CONFIG_CMD_SF
+#define CONFIG_MXC_SPI
+#define CONFIG_SPI_FLASH_MTD
+#define CONFIG_SPI_FLASH_BAR
+#define CONFIG_SF_DEFAULT_BUS              0
+#define CONFIG_SF_DEFAULT_CS               0
+#define CONFIG_SF_DEFAULT_SPEED            30000000
+#define CONFIG_SF_DEFAULT_MODE             (SPI_MODE_0)
+
 /* Command definition */
 #define CONFIG_CMD_BMODE
 
