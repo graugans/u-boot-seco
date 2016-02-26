@@ -45,8 +45,8 @@ DECLARE_GLOBAL_DATA_PTR;
 		PAD_CTL_DSE_40ohm | PAD_CTL_SRE_FAST)
 
 #define I2C_PAD_CTRL   (PAD_CTL_PUS_100K_UP |                  \
-        PAD_CTL_SPEED_MED | PAD_CTL_DSE_40ohm | PAD_CTL_HYS |   \
-        PAD_CTL_ODE | PAD_CTL_SRE_FAST)
+		PAD_CTL_SPEED_MED | PAD_CTL_DSE_40ohm | PAD_CTL_HYS |   \
+		PAD_CTL_ODE | PAD_CTL_SRE_FAST)
 
 #define WDT_EN		IMX_GPIO_NR(5, 4)
 #define WDT_TRG		IMX_GPIO_NR(3, 19)
@@ -103,16 +103,16 @@ struct i2c_pads_info i2c_pad_info1 = {
 struct i2c_pads_info i2c_pad_info2 = {
 	.scl = {
 		.i2c_mode  = MX6Q_PAD_GPIO_5__I2C3_SCL
-		        | MUX_PAD_CTRL(I2C_PAD_CTRL),
+				| MUX_PAD_CTRL(I2C_PAD_CTRL),
 		.gpio_mode = MX6Q_PAD_GPIO_5__GPIO1_IO05
-		        | MUX_PAD_CTRL(I2C_PAD_CTRL),
+				| MUX_PAD_CTRL(I2C_PAD_CTRL),
 		.gp        = IMX_GPIO_NR(1, 5),
 	},
 	.sda = {
 		.i2c_mode  = MX6Q_PAD_GPIO_6__I2C3_SDA
-		        | MUX_PAD_CTRL(I2C_PAD_CTRL),
+				| MUX_PAD_CTRL(I2C_PAD_CTRL),
 		.gpio_mode = MX6Q_PAD_GPIO_6__GPIO1_IO06
-		        | MUX_PAD_CTRL(I2C_PAD_CTRL),
+				| MUX_PAD_CTRL(I2C_PAD_CTRL),
 		.gp        = IMX_GPIO_NR(7, 11),
 	},
 };
@@ -182,20 +182,20 @@ static iomux_v3_cfg_t const enet_pads2[] = {
 
 static void setup_a62_i2c(void)
 {
-    setup_i2c(1, CONFIG_SYS_I2C_SPEED, 0x7f, &i2c_pad_info1);
-    setup_i2c(2, CONFIG_SYS_I2C_SPEED, 0x7f, &i2c_pad_info2);
+	setup_i2c(1, CONFIG_SYS_I2C_SPEED, 0x7f, &i2c_pad_info1);
+	setup_i2c(2, CONFIG_SYS_I2C_SPEED, 0x7f, &i2c_pad_info2);
 
 }
 
 int board_spi_cs_gpio(unsigned bus, unsigned cs)
 {
-        return (bus == 0 && cs == 0) ? (IMX_GPIO_NR(2, 30)) : -1;
+		return (bus == 0 && cs == 0) ? (IMX_GPIO_NR(2, 30)) : -1;
 }
 
 static void setup_spinor(void)
 {
-    gpio_request(IMX_GPIO_NR(2, 30), "spi_cs");
-    gpio_direction_output(IMX_GPIO_NR(2, 30), 1);
+	gpio_request(IMX_GPIO_NR(2, 30), "spi_cs");
+	gpio_direction_output(IMX_GPIO_NR(2, 30), 1);
 	imx_iomux_v3_setup_multiple_pads(ecspi1_pads, ARRAY_SIZE(ecspi1_pads));
 }
 
