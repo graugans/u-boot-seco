@@ -164,9 +164,11 @@
 		"fi;\0" \
 		"findfdt=" \
 			"if test $board_rev = MX6Q ; then " \
-				"setenv fdt_file imx6q-udoo.dtb; fi; " \
+				"setenv fdt_file imx6q-seco_SBC_A62.dtb; fi; " \
 			"if test $board_rev = MX6DL ; then " \
-				"setenv fdt_file imx6dl-udoo.dtb; fi; " \
+				"setenv fdt_file imx6dl-seco_SBC_A62.dtb; fi; " \
+			"if test $board_rev = MX6S ; then " \
+				"setenv fdt_file imx6s-seco_SBC_A62.dtb; fi; " \
 			"if test $fdt_file = undefined; then " \
 				"echo WARNING: Could not determine dtb to use; fi; \0"
 
